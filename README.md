@@ -1,0 +1,2 @@
+# ssis_proj0100_template
+ssis_proj0100_template_-with_SQL-Tasks_for_Start_and_EndLogging_and_RowLogging
