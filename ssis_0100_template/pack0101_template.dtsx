@@ -1,0 +1,768 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/17/2021 8:17:09 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="LA0719"
+  DTS:CreatorName="karl"
+  DTS:DTSID="{CD4B0348-ECF7-4998-896A-4CFB5A21F1B8}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="15.0.2000.167"
+  DTS:LocaleID="1031"
+  DTS:ObjectName="pack0101_template"
+  DTS:VersionBuild="4"
+  DTS:VersionGUID="{32A72FCA-993A-405A-A3FC-1DAB960492C9}"
+  DTS:VersionMajor="0">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[conn_SourceDB]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{16E135D6-0221-4DAA-A2BA-423C27076D1C}"
+      DTS:ObjectName="conn_SourceDB">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">"server=" + @[$Package::pSourceServername] + ";initial catalog=" + @[$Package::pSourceDB] + ";integrated security=SSPI;provider=SQLNCLI11;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
+        DTS:Name="ServerName">@[$Package::pSourceServername]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="server=SQL02\BI;initial catalog=Smart_csv;integrated security=SSPI;provider=SQLNCLI11;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[conn_TargetDB]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{61D70996-C147-4F63-9B6B-99E8AE9974BE}"
+      DTS:ObjectName="conn_TargetDB">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">"server=" + @[$Package::pTargetServername] + ";initial catalog=" + @[$Package::pTargetDB] + ";integrated security=SSPI;provider=SQLNCLI11;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
+        DTS:Name="ServerName">@[$Package::pTargetServername]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="server=SQL02\BI;initial catalog=Smart_csv_Staging;integrated security=SSPI;provider=SQLNCLI11;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[conn_ToolsDB]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{530794BE-79F9-4FEB-BCF2-D0AFFC3C9FB0}"
+      DTS:ObjectName="conn_ToolsDB">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">"server=" + @[$Package::pToolsServername] + ";initial catalog=" + @[$Package::pToolsDB] + ";integrated security=SSPI;provider=SQLNCLI11;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
+        DTS:Name="ServerName">@[$Package::pToolsServername]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="server=SQL02\BI;initial catalog=Tools_Log;integrated security=SSPI;provider=SQLNCLI11;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="7"
+      DTS:DTSID="{A40ABC84-EBE8-4C90-8349-B526D8B23180}"
+      DTS:ObjectName="pBeginDate">
+      <DTS:Property
+        DTS:DataType="7"
+        DTS:Name="ParameterValue">6/1/2021</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="7"
+      DTS:DTSID="{D803B779-F470-46F3-A418-17119AD84CE2}"
+      DTS:ObjectName="pEndDate">
+      <DTS:Property
+        DTS:DataType="7"
+        DTS:Name="ParameterValue">6/30/2021</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{9A353B52-BCAA-4376-AEB8-1FCA66408C77}"
+      DTS:ObjectName="pFilePathArchive">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">C:\BI\Smart_csv\archive\</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{7A5FC201-DA6B-48D1-A67D-413D6701BF5F}"
+      DTS:ObjectName="pFilePathOut">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">C:\BI\Smart_csv\out\</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{E4395FE4-A1AA-4EBA-AE71-CAC32859C176}"
+      DTS:ObjectName="pFilePathProgress">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">C:\BI\Smart_csv\progress\</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{93D9CCB4-9655-41F3-BA25-5D60061985E2}"
+      DTS:ObjectName="pSourceDB">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">Smart_csv</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{D047002D-669F-49ED-9B94-1BBA1A3F87B7}"
+      DTS:ObjectName="pSourceServername">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">SQL02\BI</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{A88E79C6-0E80-4A92-8666-0869FA0D2202}"
+      DTS:ObjectName="pTargetDB">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">Smart_csv_Staging</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{EC9C047F-0249-423D-B31C-6A6A75CFF1C2}"
+      DTS:ObjectName="pTargetServername">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">SQL02\BI</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{9559C755-FD91-475F-827A-39B1CCF67A57}"
+      DTS:ObjectName="pToolsDB">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">Tools_Log</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{E51BB244-BE03-4CC9-8B79-581A775AE3AD}"
+      DTS:ObjectName="pToolsServername">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">SQL02\BI</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{055B1451-61C5-4773-8737-7146B57D3574}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vCurrRowsSource">
+      <DTS:VariableValue
+        DTS:DataType="20">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{4591A9A2-B319-4574-815D-AFA6674D3E48}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vCurrRowsTarget">
+      <DTS:VariableValue
+        DTS:DataType="20">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{5778DE91-786D-4B68-B5F5-762A2B65AFDE}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vDelDelta">
+      <DTS:VariableValue
+        DTS:DataType="20">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{3C937822-7C6B-430C-97B5-4ACD81687523}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vErrorCode_Failure">
+      <DTS:VariableValue
+        DTS:DataType="3">51001</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{DB90028E-F2E4-40C7-9D38-596D0B846BF5}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vErrorCode_Success">
+      <DTS:VariableValue
+        DTS:DataType="3">1</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{2C71C65E-1A3C-4DEF-8D09-DB41551247A1}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vFileComp">
+      <DTS:VariableValue
+        DTS:DataType="8">abc</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{E2CA49FD-587C-4979-9498-D156ACF704B6}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vFileCreationtime">
+      <DTS:VariableValue
+        DTS:DataType="7">7/26/2021 11:11:59 AM</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{AABBFFA5-E1E3-4C92-B6B9-880B0DA4B20B}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vFileLastWritetime">
+      <DTS:VariableValue
+        DTS:DataType="7">7/26/2021 11:12:21 AM</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{1C1838F4-AD79-4742-AA12-080A8FBD0373}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vFilename">
+      <DTS:VariableValue
+        DTS:DataType="8">INVOICE_20201224_1650.txt</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{505DCD32-F106-4D6E-9D2C-5D93B87BD8C5}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vFileSHA">
+      <DTS:VariableValue
+        DTS:DataType="8">fileSHA</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{A08E0D74-DC91-4452-8893-DB8F41EE437E}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vFileSize">
+      <DTS:VariableValue
+        DTS:DataType="20">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{734D3C5F-C34D-4377-8577-83B7D7114D09}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vFileType">
+      <DTS:VariableValue
+        DTS:DataType="8">INVOICE</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{40D31417-4FED-423A-B6CF-C4F759AF3F95}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vInsDelta">
+      <DTS:VariableValue
+        DTS:DataType="20">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{0AA327D5-1FA5-4D1B-B551-7C811E622258}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vInvoi_Company">
+      <DTS:VariableValue
+        DTS:DataType="8">100</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{2A60B2C5-C45F-4A62-A091-387BE94A4791}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vParameter">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{AC85C326-E465-42C5-BF3A-00A0D5F0D2E0}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vUpdDelta">
+      <DTS:VariableValue
+        DTS:DataType="20">0</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\SQL_end_Logging__error"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{7A3D069A-0179-490C-8223-0FB96454254F}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_end_Logging__error"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{530794BE-79F9-4FEB-BCF2-D0AFFC3C9FB0}"
+          SQLTask:SqlStatementSource="&#xA;EXEC audit.usp_End_Logging&#xA;            @pPackageName       = ?&#xA;          , @pTaskName          = ?&#xA;          , @pUserName          = ?&#xA;          , @pPackStartTime     = ?&#xA;          , @vSuccessCode       = ?&#xA;          , @vConfigSource      = null  &#xA;          , @vConfigPackagename = null    &#xA;          , @vConfigValue       = null          &#xA;            " xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="System::PackageName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="System::TaskName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="2"
+            SQLTask:DtsVariableName="System::UserName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="3"
+            SQLTask:DtsVariableName="System::StartTime"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="4"
+            SQLTask:DtsVariableName="User::vErrorCode_Success"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\SQL_end_Logging__OK"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{CD77C029-2226-4CEE-A194-467C93BB729E}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_end_Logging__OK"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{530794BE-79F9-4FEB-BCF2-D0AFFC3C9FB0}"
+          SQLTask:SqlStatementSource="&#xA;EXEC audit.usp_End_Logging&#xA;            @pPackageName       = ?&#xA;          , @pTaskName          = ?&#xA;          , @pUserName          = ?&#xA;          , @pPackStartTime     = ?&#xA;          , @vSuccessCode       = ?&#xA;          , @vConfigSource      = null  &#xA;          , @vConfigPackagename = null    &#xA;          , @vConfigValue       = null          &#xA;            " xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="System::PackageName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="System::TaskName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="2"
+            SQLTask:DtsVariableName="System::UserName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="3"
+            SQLTask:DtsVariableName="System::StartTime"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="4"
+            SQLTask:DtsVariableName="User::vErrorCode_Success"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\SQL_log_RowCount_Invoice"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{DE674799-B467-4D65-90DA-29756C1548B1}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_log_RowCount_Invoice"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{530794BE-79F9-4FEB-BCF2-D0AFFC3C9FB0}"
+          SQLTask:SqlStatementSource="&#xA;&#xA;Declare @fileComp         nvarchar(20)  = ?&#xA;      , @PackStartTime    smalldatetime = ?&#xA;      , @PackageName      nvarchar(100) = ?&#xA;      , @TaskName         nvarchar(100) = ?&#xA;      , @CurrRowsSource   bigint        = ?&#xA;      , @CurrRowsTarget   bigint        = ?&#xA;      , @InsDelta         bigint        = ?&#xA;      , @UpdDelta         bigint        = ?&#xA;      , @DelDelta         bigint        = ?&#xA;&#xA;SET @TaskName = @TaskName + '_' + @fileComp&#xA;&#xA;EXEC [audit].[usp_Row_Logging]&#xA;                   @pPackStartTime   = @PackStartTime&#xA;                 , @pPackageName     = @PackageName&#xA;                 , @pTaskName        = @TaskName&#xA;                 , @vCurrRowsSource  = @CurrRowsSource&#xA;                 , @vCurrRowsTarget  = @CurrRowsTarget&#xA;                 , @vInsDelta        = @InsDelta&#xA;                 , @vUpdDelta        = @UpdDelta&#xA;                 , @vDelDelta        = @DelDelta&#xA;&#xA;&#xA;            " xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::vFileComp"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="System::StartTime"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="2"
+            SQLTask:DtsVariableName="System::PackageName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="3"
+            SQLTask:DtsVariableName="System::TaskName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="4"
+            SQLTask:DtsVariableName="User::vCurrRowsSource"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="20"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="5"
+            SQLTask:DtsVariableName="User::vCurrRowsTarget"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="20"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="6"
+            SQLTask:DtsVariableName="User::vInsDelta"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="20"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="7"
+            SQLTask:DtsVariableName="User::vUpdDelta"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="20"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="8"
+            SQLTask:DtsVariableName="User::vDelDelta"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="20"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\SQL_merge_abc"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{A71B0EB0-52B4-45AA-93BB-2814D23E42AB}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_merge_abc"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{16E135D6-0221-4DAA-A2BA-423C27076D1C}"
+          SQLTask:SqlStatementSource="&#xA;EXEC dbo.usp_pack0101_merge_abc&#xA;    &#xA;                "
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="0"
+            SQLTask:DtsVariableName="User::vCurrRowsSource" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="1"
+            SQLTask:DtsVariableName="User::vCurrRowsTarget" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="2"
+            SQLTask:DtsVariableName="User::vInsDelta" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="3"
+            SQLTask:DtsVariableName="User::vUpdDelta" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="4"
+            SQLTask:DtsVariableName="User::vDelDelta" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::vFileType"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="User::vFileComp"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="2"
+            SQLTask:DtsVariableName="User::vInvoi_Company"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="3"
+            SQLTask:DtsVariableName="System::StartTime"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="4"
+            SQLTask:DtsVariableName="$Package::pBeginDate"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="5"
+            SQLTask:DtsVariableName="$Package::pEndDate"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\SQL_start_Logging"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DTSID="{D703B28B-870F-47DC-827D-D68EAC2853B3}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_start_Logging"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{530794BE-79F9-4FEB-BCF2-D0AFFC3C9FB0}"
+          SQLTask:SqlStatementSource="&#xA;                &#xA;EXEC audit.usp_Start_Logging&#xA;            @pPackageName       = ?&#xA;          , @pTaskName          = ?&#xA;          , @pUserName          = ?&#xA;          , @pPackStartTime     = ?&#xA;          , @pSuccessCode       = ?&#xA;&#xA;            " xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="System::PackageName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="System::TaskName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="2"
+            SQLTask:DtsVariableName="System::UserName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="3"
+            SQLTask:DtsVariableName="System::StartTime"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="4"
+            SQLTask:DtsVariableName="User::vErrorCode_Success"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Einschränkung]"
+      DTS:CreationName=""
+      DTS:DTSID="{7B013825-8AE7-4C8E-8092-AA1BFD1E3FD2}"
+      DTS:From="Package\SQL_start_Logging"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Einschränkung"
+      DTS:To="Package\SQL_merge_abc" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Einschränkung 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{B3A8AC72-6FD9-4DE5-99D3-DA734DD1CB59}"
+      DTS:From="Package\SQL_merge_abc"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Einschränkung 1"
+      DTS:To="Package\SQL_log_RowCount_Invoice" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Einschränkung 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{124FFCBD-593D-4452-986C-11C3CB98E2B2}"
+      DTS:From="Package\SQL_log_RowCount_Invoice"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Einschränkung 2"
+      DTS:To="Package\SQL_end_Logging__OK" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Einschränkung 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{89294D80-E970-463A-BBA9-E81A38D5C6BF}"
+      DTS:From="Package\SQL_merge_abc"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Einschränkung 3"
+      DTS:To="Package\SQL_end_Logging__error"
+      DTS:Value="1" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--Dieser CDATA-Abschnitt enthält die Layoutinformationen des Pakets, z.B. Informationen wie X-/Y-Koordinaten, Breite und Höhe.-->
+<!--Wenn Sie diesen Abschnitt manuell ändern und Ihnen ein Fehler unterläuft, können Sie ihn löschen. -->
+<!--Das Paket kann zwar weiterhin normal geladen werden, aber frühere Layoutinformationen gehen verloren, und die Elemente auf der Entwurfsoberfläche werden vom Designer automatisch neu angeordnet.-->
+<Objects
+  Version="8">
+  <!--Jeder darunter liegende Knoten enthält Eigenschaften, die sich nicht auf das Laufzeitverhalten auswirken.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="198.4,41.6"
+          Id="Package\SQL_end_Logging__error"
+          TopLeft="31.2142861521975,124.288218402698" />
+        <NodeLayout
+          Size="210.4,41.6"
+          Id="Package\SQL_end_Logging__OK"
+          TopLeft="310.957143842444,333.817633105974" />
+        <NodeLayout
+          Size="210.4,41.6"
+          Id="Package\SQL_start_Logging"
+          TopLeft="310.957143842444,11.6176471446212" />
+        <NodeLayout
+          Size="210.4,41.6"
+          Id="Package\SQL_merge_abc"
+          TopLeft="310.957143842444,119.017642465072" />
+        <NodeLayout
+          Size="210.4,41.6"
+          Id="Package\SQL_log_RowCount_Invoice"
+          TopLeft="310.957143842444,226.417637785523" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Einschränkung]"
+          TopLeft="416.157143842444,53.2176471446212">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,65.799995320451"
+              Start="0,0"
+              End="0,58.299995320451">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,58.299995320451" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Einschränkung 1]"
+          TopLeft="416.157143842444,160.617642465072">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,65.799995320451"
+              Start="0,0"
+              End="0,58.299995320451">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,58.299995320451" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Einschränkung 2]"
+          TopLeft="416.157143842444,268.017637785523">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,65.799995320451"
+              Start="0,0"
+              End="0,58.299995320451">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,58.299995320451" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Einschränkung 3]"
+          TopLeft="310.957143842444,142.452930433885">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-81.3428576902469,0"
+              Start="0,0"
+              End="-73.8428576902469,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-73.8428576902469,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-51.1301202513734,5,28.4173828125,9.724609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
