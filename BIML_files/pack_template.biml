@@ -1,0 +1,30 @@
+<Biml xmlns="http://schemas.varigence.com/biml.xsd">
+<!-- sql connection string - nur fuer Designtime relevant -->     
+        <#@ include file="add_connections.biml"#>
+    <Packages>
+        <Package Name="pack__template" Language="None" ProtectionLevel="EncryptSensitiveWithUserKey">
+            
+        <!-- Parameters + Connections + Variables -->     
+        <#@ include file="add_pcv.biml"#>
+        <!-- ******************************************** -->        
+        <Tasks>
+            <ExecuteSQL Name="SQL_start_Logging" ConnectionName="conn_ToolsDB">
+        <#@ include file="add_SQL_start_Logging.biml"#>
+            </ExecuteSQL>
+
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden --> 
+        <ExecuteSQL Name="SQL_log_RowCount_DFT" ConnectionName="conn_ToolsDB">
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+
+
+
+        <ExecuteSQL Name="SQL_end_Logging__OK" ConnectionName="conn_ToolsDB">
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL>
+
+        </Tasks>
+        </Package>
+    </Packages>
+</Biml>

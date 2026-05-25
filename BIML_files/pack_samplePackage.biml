@@ -1,0 +1,1078 @@
+﻿<Biml xmlns="http://schemas.varigence.com/biml.xsd">
+<!-- sql connection string - nur fuer Designtime relevant -->     
+        <#@ include file="add_connections.biml"#>
+    <Packages>
+        <Package Name="pack1405_BonusCertificateCapped" Language="None" ProtectionLevel="EncryptSensitiveWithUserKey">
+            
+        <!-- Parameters + Connections + Variables -->     
+        <#@ include file="add_pcv.biml"#>
+        <!-- ******************************************** -->        
+        <Tasks>
+            <ExecuteSQL Name="SQL_start_Logging" ConnectionName="conn_ToolsDB">
+        <#@ include file="add_SQL_start_Logging.biml"#>
+            </ExecuteSQL>
+            <ExecuteSQL Name="SQL_get_ConfigValues" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+                <PrecedenceConstraints>
+                    <Inputs>
+                        <Input OutputPathName="SQL_start_Logging.Output" />
+                    </Inputs>
+                </PrecedenceConstraints>
+        <#@ include file="add_SQL_get_ConfigValues.biml"#>
+            </ExecuteSQL>
+
+        <Container Name="Sequenzcontainer">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <Input OutputPathName="SQL_get_ConfigValues.Output" EvaluationOperation="ExpressionAndConstraint" Expression="( @[User::vConfigSource] == &quot;na&quot; )  || ( @[User::vConfigSource] != &quot;na&quot;  &amp;&amp; @[User::vConfigValue] == 1 )" />
+                </Inputs>
+            </PrecedenceConstraints>
+
+        <!-- ****  inside  Sequenzcontainer  **** -->
+        <Tasks>
+<# var packNo   = "1405"                             ; #>
+<# var filter   = "BonusCertificateCapped"           ; #>
+<# var level01  = "Instrument"                       ; #>
+<# var level02  = "InstrumentMarketLabel"            ; #>
+<# var level03  = "Listing"                          ; #>
+<# var level04  = "ListingDistributionChannel"       ; #>
+<# var level05  = "FeedIdentifier"                   ; #>
+<# var level06  = "FixingDetail"                     ; #>
+<# var level07  = "GenericAttribute"                 ; #>
+<# var level08  = "LocalCode"                        ; #>
+<# var level09  = "SecurityInstrument"               ; #>
+<# var level10  = "IssueDetails"                     ; #>
+<# var level11  = "RedemptionDetails"                ; #>
+<# var level12  = "TradingInfo"                      ; #>
+<# var level13  = "DerivedInstrument"                ; #>
+<# var level14  = "CouponPayment"                    ; #>
+<# var level15  = "SubscriptionPercentageAttribute"  ; #>  <!--  DerivedInstrument  -->
+<# var level16  = "BonusCertificate"                 ; #>
+<# var level17  = "BonusCertificateCappedBase"       ; #>
+<# var level18  = "BonusCertificateCapped"           ; #>
+
+
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                   "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level01#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <!--  1st Task has  NO  PrecedenceConstraints !  -->
+                    <!--   OutputPathName="                 ...       .Output"  MUSS ersetzt werden -->
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level01#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error1" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level01#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden --> 
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level01#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="          ...        .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level01#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** --> 
+        <!-- ******************************************** -->        
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level02#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_log_RowCount_<#=level01#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level02#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+       
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error2" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="          ...        .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level02#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level02#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="          ...        .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level02#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** --> 
+        <!-- ******************************************** -->        
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level03#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level02#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level03#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error3" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="          ...        .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level03#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level03#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="          ...        .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level03#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->  
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level04#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level03#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level04#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error4" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level04#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level04#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level04#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->   
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level05#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level04#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level05#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error5" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level05#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level05#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level05#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->  
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level06#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level05#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level06#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error6" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level06#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level06#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level06#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->        
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level07#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level06#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level07#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error7" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level07#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level07#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level07#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level08#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level07#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level08#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error8" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level08#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level08#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level08#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level09#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level08#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level09#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error9" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level09#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level09#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level09#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level10#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level09#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level10#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error10" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level10#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level10#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level10#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level11#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level10#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level11#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error11" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level11#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level11#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level11#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level12#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level11#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level12#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error12" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level12#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level12#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level12#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level13#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level12#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level13#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error13" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level13#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level13#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level13#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level14#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level13#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level14#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error14" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level14#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level14#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level14#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level15#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level14#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level15#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error15" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level15#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level15#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level15#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level16#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level15#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level16#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error16" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level16#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level16#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level16#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level17#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level16#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge0000_<#=level17#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error17" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level17#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level17#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level17#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+        <!-- ******************************************** -->
+        <!-- begin level  -->
+        
+        <!--        Name="  ...                "  MUSS ersetzt werden -->        
+        <ExecuteSQL Name="SQL_merge_<#=level18#>" ConnectionName="conn_ToolsDB" ResultSet="SingleRow">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="                 ...        .Output" =vorheriger Level!!  MUSS ersetzt werden -->               
+                    <Input OutputPathName="SQL_log_RowCount_<#=level17#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime" Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="pSourceDB"        Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="pTargetDB"        Length="-1" DataType="String" />
+            </Parameters>
+            <DirectInput>
+        <!-- merge...   MUSS ersetzt werden -->
+exec dbo.usp_merge<#=packNo#>_<#=level18#>
+         @pPackStartTime   = ?
+       , @pSourceDB        = ?
+       , @pTargetDB        = ?
+       , @pFilter          = '<#=filter#>'
+
+            </DirectInput>
+            <Results>
+                <Result Name="0" VariableName="User.vCurrRowsSource" />
+                <Result Name="1" VariableName="User.vCurrRowsTarget" />
+                <Result Name="2" VariableName="User.vInsDelta"       />
+                <Result Name="3" VariableName="User.vUpdDelta"       />
+                <Result Name="4" VariableName="User.vDelDelta"       />
+            </Results>                
+        </ExecuteSQL>
+        <!--  ****  -->                   <!-- Nr -->
+        <ExecuteSQL Name="SQL_end_Logging_error18" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->
+                    <Input OutputPathName="SQL_merge_<#=level18#>.Output" EvaluationValue="Failure" />  
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL> 
+        <!--  ****  -->
+        <!--        Name="  ...            ...        "  MUSS ersetzt werden -->
+        <ExecuteSQL Name="SQL_log_RowCount_<#=level18#>" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints>
+                <Inputs>
+                    <!--   OutputPathName="  ...                .Output"  MUSS ersetzt werden -->                    
+                    <Input OutputPathName="SQL_merge_<#=level18#>.Output" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_log_RowCount.biml"#>
+        </ExecuteSQL>            
+        <!-- end level  -->
+        <!-- ******************************************** -->
+
+        </Tasks>
+        <!-- ****  inside  Sequenzcontainer  **** -->                        
+        </Container>
+
+        <ExecuteSQL Name="SQL_end_Logging__OK" ConnectionName="conn_ToolsDB">
+            <PrecedenceConstraints LogicalType="Or">
+                <Inputs>
+                    <Input OutputPathName="Sequenzcontainer.Output" />
+                    <Input OutputPathName="SQL_get_ConfigValues.Output" 
+                           EvaluationOperation="ExpressionAndConstraint" 
+                           Expression="( @[User::vConfigSource] != &quot;na&quot;  &amp;&amp; @[User::vConfigValue] != 1 )" />
+                </Inputs>
+            </PrecedenceConstraints>
+        <#@ include file="add_SQL_end_Logging.biml"#>
+        </ExecuteSQL>
+
+        </Tasks>
+        </Package>
+    </Packages>
+</Biml>
