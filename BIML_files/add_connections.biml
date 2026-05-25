@@ -1,0 +1,12 @@
+﻿<!-- sql connection string - nur fuer Designtime relevant -->
+<Connections>
+    <Connection Name="conn_ToolsDB" 
+                ConnectionString="Data Source=localhost;Initial Catalog=FBI_Tools_Log;Provider=SQLNCLI11.1;Integrated Security=SSPI" />
+
+    <Connection Name="conn_SourceDB" 
+                ConnectionString="Data Source=localhost;Initial Catalog=FBI_CoBa_Source;Provider=SQLNCLI11.1;Integrated Security=SSPI" />
+
+    <Connection Name="conn_TargetDB" 
+                ConnectionString="Data Source=localhost;Initial Catalog=FBI;Provider=SQLNCLI11.1;Integrated Security=SSPI" />
+</Connections>
+<!--  end  -->

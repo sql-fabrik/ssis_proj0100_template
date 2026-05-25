@@ -1,0 +1,24 @@
+﻿
+            <Parameters>
+                <Parameter Name="0" VariableName="System.StartTime"      Length="-1" DataType="Date"   />
+                <Parameter Name="1" VariableName="System.PackageName"    Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="System.TaskName"       Length="-1" DataType="String" />
+                <Parameter Name="3" VariableName="User.vCurrRowsSource"  Length="-1" DataType="Int64"  />
+                <Parameter Name="4" VariableName="User.vCurrRowsTarget"  Length="-1" DataType="Int64"  />
+                <Parameter Name="5" VariableName="User.vInsDelta"        Length="-1" DataType="Int64"  />
+                <Parameter Name="6" VariableName="User.vUpdDelta"        Length="-1" DataType="Int64"  />
+                <Parameter Name="7" VariableName="User.vDelDelta"        Length="-1" DataType="Int64"  />
+            </Parameters>
+            <DirectInput>
+                
+EXEC [audit].[usp_Row_Logging]
+                   @pPackStartTime   = ?
+                 , @pPackageName     = ?
+                 , @pTaskName        = ?         
+                 , @vCurrRowsSource  = ?
+                 , @vCurrRowsTarget  = ?
+                 , @vInsDelta        = ?
+                 , @vUpdDelta        = ?
+                 , @vDelDelta        = ?
+
+            </DirectInput>

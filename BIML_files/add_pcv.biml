@@ -1,0 +1,53 @@
+﻿<!--  Parameters + Connections + Variables -->
+    
+<Parameters>
+    <Parameter Name="pToolsServername"    DataType="String" >localhost</Parameter>
+    <Parameter Name="pSourceServername"   DataType="String" >localhost</Parameter>
+    <Parameter Name="pTargetServername"   DataType="String" >localhost</Parameter>    
+    
+    <Parameter Name="pToolsDB"            DataType="String" >FBI_Tools_Log</Parameter>
+    <Parameter Name="pSourceDB"           DataType="String" >FBI_CoBa_Source</Parameter>
+    <Parameter Name="pTargetDB"           DataType="String" >FBI</Parameter>
+</Parameters>
+
+<!-- ************************************************************************ -->
+
+<Connections>
+    <Connection ConnectionName="conn_ToolsDB">
+        <Expressions>
+            <Expression ExternalProperty="ServerName"      >@[$Package::pToolsServername]</Expression>
+            <Expression ExternalProperty="ConnectionString">"server=" + @[$Package::pToolsServername] + ";initial catalog=" + @[$Package::pToolsDB] + ";integrated security=SSPI;provider=SQLNCLI11;"</Expression>
+        </Expressions>
+    </Connection>    
+    <Connection ConnectionName="conn_SourceDB">
+        <Expressions>
+            <Expression ExternalProperty="ServerName"      >@[$Package::pSourceServername]</Expression>
+            <Expression ExternalProperty="ConnectionString">"server=" + @[$Package::pSourceServername] + ";initial catalog=" + @[$Package::pSourceDB] + ";integrated security=SSPI;provider=SQLNCLI11;"</Expression>
+        </Expressions>
+    </Connection> 
+    <Connection ConnectionName="conn_TargetDB">
+        <Expressions>
+            <Expression ExternalProperty="ServerName"      >@[$Package::pTargetServername]</Expression>
+            <Expression ExternalProperty="ConnectionString">"server=" + @[$Package::pTargetServername] + ";initial catalog=" + @[$Package::pTargetDB] + ";integrated security=SSPI;provider=SQLNCLI11;"</Expression>
+        </Expressions>
+    </Connection>  
+</Connections>
+
+<!-- ************************************************************************ -->
+
+<Variables> 
+    <Variable Name="vErrorCode_Success"  DataType="Int32" >1</Variable>
+    <Variable Name="vErrorCode_Failure"  DataType="Int32" >51001</Variable>
+
+    <Variable Name="vCurrRowsSource"     DataType="Int64" >0</Variable>
+    <Variable Name="vCurrRowsTarget"     DataType="Int64" >0</Variable>
+    <Variable Name="vInsDelta"           DataType="Int64" >0</Variable>
+    <Variable Name="vUpdDelta"           DataType="Int64" >0</Variable>
+    <Variable Name="vDelDelta"           DataType="Int64" >0</Variable>
+        
+    <Variable Name="vConfigSource"           DataType="String" >--</Variable>
+    <Variable Name="vConfigPackagename"      DataType="String" >--</Variable>
+    <Variable Name="vConfigValue"            DataType="Int32"  >-2</Variable>                        
+</Variables>
+
+<!--  end  -->

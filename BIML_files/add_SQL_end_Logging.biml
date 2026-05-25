@@ -1,0 +1,25 @@
+﻿<!-- SQL_end_Logging: details -->
+            <Parameters>
+                <Parameter Name="0" VariableName="System.PackageName"      Length="-1" DataType="String" />
+                <Parameter Name="1" VariableName="System.TaskName"         Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="System.UserName"         Length="-1" DataType="String" />
+                <Parameter Name="3" VariableName="System.StartTime"        Length="-1" DataType="Date"   />
+                <Parameter Name="4" VariableName="User.vErrorCode_Success" Length="-1" DataType="Int32"  />
+                <Parameter Name="5" VariableName="User.vConfigSource"      Length="-1" DataType="String" />
+                <Parameter Name="6" VariableName="User.vConfigPackagename" Length="-1" DataType="String" />
+                <Parameter Name="7" VariableName="User.vConfigValue"       Length="-1" DataType="Int32"  />
+            </Parameters>
+            
+            <DirectInput>
+EXEC audit.usp_End_Logging
+            @pPackageName       = ?
+          , @pTaskName          = ?
+          , @pUserName          = ?
+          , @pPackStartTime     = ?
+          , @vSuccessCode       = ?
+          , @vConfigSource      = ?  
+          , @vConfigPackagename = ?    
+          , @vConfigValue       = ?          
+            </DirectInput>
+
+<!--  end file  -->

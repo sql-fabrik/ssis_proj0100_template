@@ -1,0 +1,19 @@
+﻿<!-- SQL_get_ConfigValues: details -->  
+            <Parameters>
+                <Parameter Name="0" VariableName="System.PackageName"     Length="-1" DataType="String" />
+                <Parameter Name="1" VariableName="pTargetDB"              Length="-1" DataType="String" />                
+            </Parameters>
+            <DirectInput>
+                
+EXEC [audit].[usp_get_ConfigValues]
+                   @pPackageName     = ?
+                 , @pTargetDB        = ?
+                 
+            </DirectInput>        
+            <Results>
+                <Result Name="0" VariableName="User.vConfigSource" />
+                <Result Name="1" VariableName="User.vConfigPackagename" />
+                <Result Name="2" VariableName="User.vConfigValue" />
+            </Results>     
+            
+<!--  end file  -->

@@ -1,0 +1,20 @@
+﻿<!-- SQL_start_Logging: details -->
+            <Parameters>
+                <Parameter Name="0" VariableName="System.PackageName"      Length="-1" DataType="String" />
+                <Parameter Name="1" VariableName="System.TaskName"         Length="-1" DataType="String" />
+                <Parameter Name="2" VariableName="System.UserName"         Length="-1" DataType="String" />
+                <Parameter Name="3" VariableName="System.StartTime"        Length="-1" DataType="Date"   />
+                <Parameter Name="4" VariableName="User.vErrorCode_Success" Length="-1" DataType="Int32"  />
+            </Parameters>
+            <DirectInput>
+                
+EXEC audit.usp_Start_Logging
+            @pPackageName       = ?
+          , @pTaskName          = ?
+          , @pUserName          = ?
+          , @pPackStartTime     = ?
+          , @pSuccessCode       = ?
+
+            </DirectInput>
+ 
+<!--  end file  -->
